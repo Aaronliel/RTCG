@@ -7,6 +7,7 @@ function createRenderer() {
     renderer.shadowMap.autoUpdate = true;
     renderer.shadowMapEnabled = true;
     renderer.shadowMapSoft = true;
+    renderer.alpha = true;
 
     return renderer;
 }

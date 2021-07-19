@@ -8,8 +8,6 @@ function createHitmarker(minRadius = 0.05, maxRadius = 0.1, color = 0xff0000, sp
     // vertices because each vertex needs to appear once per triangle.
     const angle60 = Math.PI / 3;
     const angle30 = Math.PI / 6;
-    minRadius = 0.05;
-    maxRadius = 0.1;
     offset = 0.01;
     const vertices = new Float32Array([
         minRadius, 0.0, offset,                                    //1

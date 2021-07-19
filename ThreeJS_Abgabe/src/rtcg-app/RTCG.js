@@ -15,7 +15,7 @@ import { createPlane } from "./components/plane.js";
 import { createHitmarker } from "./components/hitmarker.js";
 import { createGroup } from "./components/group.js";
 import { createRay } from "./components/rayVisualizer.js";
-import { createCustomMat } from "./components/customMaterial.js";
+import { createVerticalLaserMat, createHorizontalLaserMat, createRadialLaserMat } from "./components/customMaterial.js";
 
 let camera;
 let renderer;
@@ -24,6 +24,7 @@ let animLoop;
 class RTCG {
 
     constructor(container) {
+
         camera = createCamera();
         scene = createScene();
         renderer = createRenderer();
@@ -62,25 +63,30 @@ class RTCG {
         scene.add(particleSys);
 
         const circleBlue = createHitmarker(0.05, 0.1, 0xff006f, 2, 2, 0.01);
-        const circleCyan = createHitmarker(0.05, 0.1, 0xff6f6f, 4, 2, 0.01);
+        const circleCyan = createHitmarker(0.01, 0.5, 0xff6f6f, 4, 2, 0.01);
         const circlePurple = createHitmarker(0.05, 0.1, 0xff06ff, 6, 2, 0.01);
         const circleYellow = createHitmarker(0.05, 0.1, 0xff6f00, 8, 2, 0.01);
+        const rLaserMat = createRadialLaserMat(renderer, new Vector3(1, 0.1, 0.1), 5);
 
-        const group = createGroup([circleBlue, circleCyan, circlePurple, circleYellow]);
+        const group = createGroup([circleBlue]);
+
+        circleCyan.material = rLaserMat;
+        scene.add(circleCyan);
+        circleCyan.position.set(1, 0, 1);
 
         const downray = createRay();
         // scene.add(downray);
         cube.add(downray);
         downray.rotation.set(-Math.PI / 2, 0, 0)
         downray.scale.z = (1, 1, 100);
-        const customMat = createCustomMat(renderer, new Vector3(1, 0.1, 0.1), 0.5);
-        downray.material = customMat;
+        const vLaserMat = createVerticalLaserMat(renderer, new Vector3(1, 0.1, 0.1), 0.5);
+        downray.material = vLaserMat;
 
         // cube.rotation.z = 0.5;
 
         const oneCube = createCube(1, 1, 10, 0x6f6f00);
         scene.add(oneCube);
-        oneCube.position.set(10, 0, 0);
+        oneCube.position.set(5, 0, 0);
 
         const directionalLight = createDirectionallight(0xffffff, 0.1);
         directionalLight.position.set(-1, 1, 0);
@@ -96,15 +102,18 @@ class RTCG {
 
 
         const childRay = new attachedRay(scene, cube, group, 0.1);
-        childRay.rayVisualizer.material = customMat;
+        const hLaserMat = createHorizontalLaserMat(renderer, new Vector3(1, 0.1, 0.1), -0.5);
+        childRay.rayVisualizer.material = hLaserMat;
 
         animLoop = new AnimationLoop(camera, scene, renderer);
         animLoop.addAnimatedObject(downray);
         animLoop.addAnimatedObject(childRay);
-        animLoop.addAnimatedObject(customMat);
+        animLoop.addAnimatedObject(vLaserMat);
+        animLoop.addAnimatedObject(hLaserMat);
+        animLoop.addAnimatedObject(rLaserMat);
         animLoop.addAnimatedObject(childRay.rayVisualizer);
-        animLoop.addAnimatedObject(circleBlue);
-        animLoop.addAnimatedObject(circleCyan);
+        // animLoop.addAnimatedObject(circleBlue);
+        // animLoop.addAnimatedObject(circleCyan);
         animLoop.addAnimatedObject(circlePurple);
         animLoop.addAnimatedObject(circleYellow);
         animLoop.addInputControlledObject(cube);
