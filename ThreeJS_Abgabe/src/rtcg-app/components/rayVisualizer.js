@@ -1,4 +1,4 @@
-import { BufferGeometry, BufferAttribute, BoxBufferGeometry, Mesh, MeshBasicMaterial, TextureLoader, FrontSide } from "https://unpkg.com/three@0.127.0/build/three.module.js";
+import { BufferGeometry, RawShaderMaterial, BufferAttribute, BoxBufferGeometry, Mesh, MeshBasicMaterial, TextureLoader, FrontSide } from "https://unpkg.com/three@0.127.0/build/three.module.js";
 
 function createRay() {
 
@@ -60,7 +60,6 @@ function createRay() {
         0.05, -0.05, 1.0
 
     ]);
-
 
     geometry.setAttribute('position', new BufferAttribute(vertices, 3));
     const material = new MeshBasicMaterial({ color: 0xff0000 });

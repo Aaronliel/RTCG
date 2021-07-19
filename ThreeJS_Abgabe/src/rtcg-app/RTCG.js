@@ -15,6 +15,7 @@ import { createPlane } from "./components/plane.js";
 import { createHitmarker } from "./components/hitmarker.js";
 import { createGroup } from "./components/group.js";
 import { createRay } from "./components/rayVisualizer.js";
+import { createCustomMat } from "./components/customMaterial.js";
 
 let camera;
 let renderer;
@@ -53,9 +54,9 @@ class RTCG {
         plane.position.set(0, -0.5, 0);
 
 
-        const cube = createCube(1, 1, 1, 0xff0000);
+        const cube = createCube(0, 0, 0, 0xff0000);
         scene.add(cube);
-        cube.position.set(-2, 0, 3);
+        cube.position.set(0, 0, 0);
 
         const particleSys = createCube(0.1, 0.1, 0.1, 0xffffff);
         scene.add(particleSys);
@@ -72,13 +73,14 @@ class RTCG {
         cube.add(downray);
         downray.rotation.set(-Math.PI / 2, 0, 0)
         downray.scale.z = (1, 1, 100);
-
+        const customMat = createCustomMat(renderer, new Vector3(1, 0.1, 0.1), 0.5);
+        downray.material = customMat;
 
         // cube.rotation.z = 0.5;
 
         const oneCube = createCube(1, 1, 10, 0x6f6f00);
         scene.add(oneCube);
-        oneCube.position.set(5, 0, 0);
+        oneCube.position.set(10, 0, 0);
 
         const directionalLight = createDirectionallight(0xffffff, 0.1);
         directionalLight.position.set(-1, 1, 0);
@@ -86,17 +88,20 @@ class RTCG {
 
         const gltf = loadGLTF("src/rtcg-app/Assets/PortalCube.glb");
         console.log(gltf);
-        scene.add(gltf);
-        console.log(gltf.children);
+        cube.add(gltf);
+        console.log(gltf, gltf.getObjectByName("Cube", true));
 
         gltf.scale.set(5, 5, 5);
-        gltf.position.set(0, 0, 0);
+        gltf.position.set(-0.05 * gltf.scale.x, 0, 0.05 * gltf.scale.z);
+
 
         const childRay = new attachedRay(scene, cube, group, 0.1);
+        childRay.rayVisualizer.material = customMat;
 
         animLoop = new AnimationLoop(camera, scene, renderer);
         animLoop.addAnimatedObject(downray);
         animLoop.addAnimatedObject(childRay);
+        animLoop.addAnimatedObject(customMat);
         animLoop.addAnimatedObject(childRay.rayVisualizer);
         animLoop.addAnimatedObject(circleBlue);
         animLoop.addAnimatedObject(circleCyan);
@@ -104,7 +109,6 @@ class RTCG {
         animLoop.addAnimatedObject(circleYellow);
         animLoop.addInputControlledObject(cube);
         this.start();
-
 
 
         // this.render("./Assets/scene.gltf");

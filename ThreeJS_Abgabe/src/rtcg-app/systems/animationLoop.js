@@ -95,6 +95,10 @@ class AnimationLoop {
     tick() {
         const delta = this.clock.getDelta();
 
+        const fps_element = document.querySelector("#fps-counter");
+        const fps = 1 / delta;
+        fps_element.textContent = fps.toFixed(1);
+
         for (const obj of this.animObjects) {
             obj.tick(delta);
         }
