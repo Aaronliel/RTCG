@@ -63,7 +63,10 @@ class RTCG {
 
         const particles = new ParticleSystem(1000);
         hitMarker.add(particles.points);
-        console.log(particles);
+        hitMarker.visible = (_visible) => {
+            hitMarker.material.visible = _visible;
+            particles.material.visible = _visible;
+        }
         const group = createGroup([hitMarker]);
 
         //creating the incoming laser-beam
@@ -82,7 +85,7 @@ class RTCG {
         gltf.position.set(-0.05 * gltf.scale.x, 0, 0.05 * gltf.scale.z);                    //because of a pivot offset in the gltf-model there's a correction needed
 
         //attaching the reflected laser-beam
-        const childRay = new attachedRay(scene, cube, group, 0.4,);
+        const childRay = new attachedRay(scene, cube, hitMarker, 0.4,);
         const hLaserMat = createHorizontalLaserMat(new Vector3(1, 0.0, 0.0), -speed);
         childRay.rayVisualizer.material = hLaserMat;
 

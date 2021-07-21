@@ -31,7 +31,7 @@ class attachedRay {
         }
 
         this.parent.add(this.splash);
-        this.splash.hide(false);
+        this.splash.visible(false);
 
         this.parent.add(this.rayVisualizer);
         this.parent.add(this.target);
@@ -74,11 +74,11 @@ class attachedRay {
 
             this.splash.lookAt(intersects[0].point.add(intersects[0].face.normal));
 
-            this.splash.hide(true);
+            this.splash.visible(true);
         }
         else {
             this.rayVisualizer.scale.z = 0;
-            this.splash.hide(false);
+            this.splash.visible(false);
         }
     }
 

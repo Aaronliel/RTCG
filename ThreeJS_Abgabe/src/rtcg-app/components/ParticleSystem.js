@@ -92,7 +92,7 @@ class ParticleSystem {
                 particle.position.multiplyScalar(1.25 + delta);
 
                 if (dst >= 1 || particle.life <= 0) {
-                    particle.position.random().subScalar(0.5).multiplyScalar(0.5);
+                    particle.position.random().sub(new THREE.Vector3(0.5, 0.5, 0)).multiplyScalar(0.5);
                     particle.position.clampLength(0.0, 0.2);
                     particle.life = Math.random() * 2;
                     console.log("tick");
@@ -131,7 +131,7 @@ class ParticleSystem {
                 particle.pColor.x,
                 particle.pColor.y,
                 particle.pColor.z,
-                1 / (5 * particle.position.distanceTo(new THREE.Vector3(0, 0, 0))));
+                1 / (10 * particle.position.distanceTo(new THREE.Vector3(0, 0, 0))));
         }
         this.geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
         this.geometry.setAttribute("size", new THREE.Float32BufferAttribute(sizes, 1));
