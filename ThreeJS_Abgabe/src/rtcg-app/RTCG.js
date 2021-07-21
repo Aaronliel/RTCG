@@ -6,7 +6,7 @@ import { attachedRay } from "./components/attachedRay.js";
 import { createAmbientlight, createDirectionallight } from "./components/lights.js";
 import { createRenderer } from "./systems/renderer.js";
 import { Resizer } from "./systems/Resizer.js";
-import { AnimationLoop } from "./systems/AnimationLoop.js";
+import { AnimationLoop } from "./systems/animationLoop.js";
 import { createOrbCTRL } from "./systems/OrbitCTRL.js";
 import { loadGLTF } from "./components/gltf.js";
 import { ARButton } from 'https://unpkg.com/three@0.126.0/examples/jsm/webxr/ARButton.js';
