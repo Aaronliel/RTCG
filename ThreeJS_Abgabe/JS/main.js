@@ -1,4 +1,4 @@
-import { RTCG } from "/src/rtcg-app/RTCG.js";
+import { RTCG } from "../src/rtcg-app/RTCG.js";
 
 function main() {
     const container = document.querySelector("#scene-container");

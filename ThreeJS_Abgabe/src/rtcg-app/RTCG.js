@@ -1,20 +1,16 @@
 import { Vector3, Vector2 } from "https://unpkg.com/three@0.127.0/build/three.module.js";
 import { createCamera } from "./components/camera.js";
-import { createCube } from "./components/box.js";
+import { createCube, createPlane, createHitmarker, createRay } from "./components/simpleObjects.js";
 import { createScene } from "./components/scene.js";
 import { attachedRay } from "./components/attachedRay.js";
-import { createAmbientlight } from "./components/ambientLight.js";
+import { createAmbientlight, createDirectionallight } from "./components/lights.js";
 import { createRenderer } from "./systems/renderer.js";
 import { Resizer } from "./systems/Resizer.js";
 import { AnimationLoop } from "./systems/AnimationLoop.js";
-import { createDirectionallight } from "./components/directionalLight.js";
 import { createOrbCTRL } from "./systems/OrbitCTRL.js";
 import { loadGLTF } from "./components/gltf.js";
 import { ARButton } from 'https://unpkg.com/three@0.126.0/examples/jsm/webxr/ARButton.js';
-import { createPlane } from "./components/plane.js";
-import { createHitmarker } from "./components/hitmarker.js";
 import { createGroup } from "./components/group.js";
-import { createRay } from "./components/rayVisualizer.js";
 import { createVerticalLaserMat, createHorizontalLaserMat, createRadialLaserMat } from "./components/customMaterial.js";
 
 let camera;
@@ -35,21 +31,23 @@ class RTCG {
         //#region stationary
         const OrbitControls = createOrbCTRL(camera, renderer.domElement);
 
-        const directionalLight = createDirectionallight(0xffffff, 0.1);
-        directionalLight.position.set(-1, 1, 0);
+        const ambientLight = createAmbientlight(0x000fff, 100);
+
+        const directionalLight = createDirectionallight(0xffffff, 10);
+        directionalLight.position.set(-1, 1.5, 1);
         scene.add(directionalLight);
 
-        const plane = createPlane(20, 20, 0x0f6f0f);
+        const plane = createPlane(20, 20, 0xafafaf);
         scene.add(plane);
         plane.rotation.x = -Math.PI / 2;
         plane.position.set(0, -0.5, 0);
 
-        const oneCube = createCube(1, 1, 10, 0x6f6f00);
+        const oneCube = createCube(1, 1, 10, 0xafaf00);
         scene.add(oneCube);
         oneCube.position.set(5, 0, 0);
         //#endregion
 
-        const speed = 2;
+        const speed = 20;
         const cube = createCube(0, 0, 0, 0xff0000);
         scene.add(cube);
         cube.position.set(0, 0, 0);
@@ -78,7 +76,7 @@ class RTCG {
         const hLaserMat = createHorizontalLaserMat(new Vector3(1, 0.0, 0.0), -speed);
         childRay.rayVisualizer.material = hLaserMat;
 
-        //
+        //setup moving Objects
         animLoop = new AnimationLoop(camera, scene, renderer);
         animLoop.addAnimatedObjects([downray, childRay, vLaserMat, hLaserMat, rLaserMat, childRay.rayVisualizer]);
         animLoop.addInputControlledObject(cube);

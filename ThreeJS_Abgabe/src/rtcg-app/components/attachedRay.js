@@ -1,17 +1,17 @@
-import { BoxBufferGeometry, Mesh, MeshPhysicalMaterial, MeshBasicMaterial, Raycaster, Ray, Vector3, Object3D, Vector2 } from "https://unpkg.com/three@0.127.0/build/three.module.js";
-import { RTCG } from "/src/rtcg-app/RTCG.js";
-import { createRay } from "/src/rtcg-app/components/rayVisualizer.js";
-import { createCube } from "/src/rtcg-app/components/box.js";
+import * as THREE from "https://unpkg.com/three@0.127.0/build/three.module.js";
+import { RTCG } from "../RTCG.js";
+import { createRay, createCube } from "./simpleObjects.js";
+
 
 class attachedRay {
     target = createCube(0.05, 0.05, 0.05, 0xff00ff);
 
     scene;
     parent;
-    origin = new Vector3(0, 0, 0);
-    direction = new Vector3(1, 0, 0);
+    origin = new THREE.Vector3(0, 0, 0);
+    direction = new THREE.Vector3(1, 0, 0);
     rayVisualizer = createRay();
-    raycaster = new Raycaster(new Vector3(0, 0, 0), this.direction, 0.1, 50);
+    raycaster = new THREE.Raycaster(new THREE.Vector3(0, 0, 0), this.direction, 0.1, 50);
     childRays = [];
     distance = 0.5;
     splash;
@@ -27,7 +27,6 @@ class attachedRay {
         this.target.position.x = 5;
         this.target.material.visible = false;
         this.tick = (delta) => { this.castRay() };
-        // this.parent.attach(this.raycaster); 
         if (!_splash) {
             this.splash = createCube(0.5, 0.5, 0.5, 0x0f0000);
         } else {
@@ -55,13 +54,14 @@ class attachedRay {
 
 
     castRay() {
-        let parentPos = new Vector3();
+        let parentPos = new THREE.Vector3();
         this.parent.getWorldPosition(parentPos);
-        let targetPos = new Vector3();
+        let targetPos = new THREE.Vector3();
         this.target.getWorldPosition(targetPos);
-        this.direction.x = targetPos.x - this.addVectors(parentPos, this.origin).x;
-        this.direction.y = targetPos.y - this.addVectors(parentPos, this.origin).y;
-        this.direction.z = targetPos.z - this.addVectors(parentPos, this.origin).z;
+        this.direction = targetPos.sub(parentPos.add(this.origin));
+        // this.direction.x = targetPos.x - this.addVectors(parentPos, this.origin).x;
+        // this.direction.y = targetPos.y - this.addVectors(parentPos, this.origin).y;
+        // this.direction.z = targetPos.z - this.addVectors(parentPos, this.origin).z;
         this.direction.normalize()
         this.raycaster.set(this.parent.position, this.direction);
 
@@ -76,7 +76,7 @@ class attachedRay {
 
             this.splash.position.x = intersects[0].distance;
 
-            this.splash.lookAt(this.addVectors(intersects[0].point, intersects[0].face.normal));
+            this.splash.lookAt(intersects[0].point.add(intersects[0].face.normal));
 
             this.splash.hide(true);
         }
@@ -86,32 +86,6 @@ class attachedRay {
         }
     }
 
-    destroy() {
-        this.target.clear();
-        this.rayVisualizer.clear();
-        this.target.remove();
-        this.rayVisualizer.remove();
-    }
-
-    getRaycaster() {
-        return this.raycaster;
-    }
-
-    addVectors(_a, _b) {
-        let c = new Vector3();
-        c.x = _a.x + _b.x;
-        c.y = _a.y + _b.y;
-        c.z = _a.z + _b.z;
-        return c;
-    }
-
-    substractVectors(_a, _b) {
-        let c = new Vector3();
-        c.x = _a.x - _b.x;
-        c.y = _a.y - _b.y;
-        c.z = _a.z - _b.z;
-        return c;
-    }
 }
 
 export { attachedRay };
