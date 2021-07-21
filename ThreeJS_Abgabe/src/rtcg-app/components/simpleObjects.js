@@ -1,14 +1,28 @@
 import * as THREE from "https://unpkg.com/three@0.127.0/build/three.module.js";
 
-function createCube(x = 2, y = 2, z = 2, color = 0x0f0f0f) {
+function createSphere(_radius = 1, _segments = 5, _color = 0xffffff) {
+    const geometry = new THREE.SphereBufferGeometry(_radius, _segments._segments);
+    const pMaterial = new THREE.MeshPhongMaterial({ color: _color });
+    const sphere = new THREE.Mesh(geometry, pMaterial);
+    let speed = 1;
+    sphere.castShadow = true;
+    sphere.receiveShadow = true;
+    sphere.material.depthTest = true;
+
+    return sphere;
+}
+
+function createCube(x = 2, y = 2, z = 2, _color = 0x0f0f0f) {
     const geometry = new THREE.BoxBufferGeometry(x, y, z);
 
 
-    const pMaterial = new THREE.MeshPhongMaterial({ color: color });
+    const pMaterial = new THREE.MeshPhongMaterial({ color: _color });
     const cube = new THREE.Mesh(geometry, pMaterial);
     let speed = 1;
     cube.castShadow = true;
     cube.receiveShadow = true;
+    cube.material.depthTest = true;
+
     cube.tick = (delta) => {
         cube.rotation.y += 0.5 * delta * speed;
     }
@@ -94,26 +108,20 @@ function createHitmarker(minRadius = 0.05, maxRadius = 0.1, color = 0xff0000, sp
         minRadius * angle30, minRadius * (-angle60), offset,
     ]);
 
-    const faces = new Float32Array([
-
-    ])
-
     geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     const material = new THREE.MeshPhongMaterial({ color: color });
     const mesh = new THREE.Mesh(geometry, material);
 
-    mesh.tick = (delta) => {
-        mesh.scale.x += speed * delta;
-        mesh.scale.y += speed * delta;
-        mesh.scale.x = mesh.scale.x % maxScale;
-        mesh.scale.y = mesh.scale.y % maxScale;
+    material.hide = (bool) => {
+
     }
+
     return mesh;
 }
 
 
 
-function createRay() {
+function createRay(_radius = 0.01) {
 
 
     const geometry = new THREE.BufferGeometry();
@@ -121,56 +129,55 @@ function createRay() {
     const angle60 = Math.PI / 3;
     const angle30 = Math.PI / 6;
     const offset = 1.0;
-    const radius = 0.05;
     const vertices = new Float32Array([
-        radius, 0.0, offset,
-        radius, 0.0, 0.0,
-        angle30 * radius, angle60 * radius, 0.0,
+        _radius, 0.0, offset,
+        _radius, 0.0, 0.0,
+        angle30 * _radius, angle60 * _radius, 0.0,
 
-        radius, 0.0, offset,
-        angle30 * radius, angle60 * radius, 0.0,
-        angle30 * radius, angle60 * radius, offset,
+        _radius, 0.0, offset,
+        angle30 * _radius, angle60 * _radius, 0.0,
+        angle30 * _radius, angle60 * _radius, offset,
 
 
-        angle30 * radius, angle60 * radius, offset,
-        angle30 * radius, angle60 * radius, 0.0,
-        -angle30 * radius, angle60 * radius, 0.0,
+        angle30 * _radius, angle60 * _radius, offset,
+        angle30 * _radius, angle60 * _radius, 0.0,
+        -angle30 * _radius, angle60 * _radius, 0.0,
 
-        angle30 * radius, angle60 * radius, offset,
-        -angle30 * radius, angle60 * radius, 0.0,
-        -angle30 * radius, angle60 * radius, offset,
+        angle30 * _radius, angle60 * _radius, offset,
+        -angle30 * _radius, angle60 * _radius, 0.0,
+        -angle30 * _radius, angle60 * _radius, offset,
 
-        -angle30 * radius, angle60 * radius, offset,
-        -angle30 * radius, angle60 * radius, 0.0,
-        -radius, 0.0, 0.0,
+        -angle30 * _radius, angle60 * _radius, offset,
+        -angle30 * _radius, angle60 * _radius, 0.0,
+        -_radius, 0.0, 0.0,
 
-        -radius, 0.0, offset,
-        -angle30 * radius, angle60 * radius, offset,
-        -radius, 0.0, 0.0,
+        -_radius, 0.0, offset,
+        -angle30 * _radius, angle60 * _radius, offset,
+        -_radius, 0.0, 0.0,
 
-        radius, 0.0, offset,
-        angle30 * radius, -angle60 * radius, 0.0,
-        radius, 0.0, 0.0,
+        _radius, 0.0, offset,
+        angle30 * _radius, -angle60 * _radius, 0.0,
+        _radius, 0.0, 0.0,
 
-        angle30 * radius, -angle60 * radius, offset,
-        angle30 * radius, -angle60 * radius, 0.0,
-        radius, 0.0, offset,
+        angle30 * _radius, -angle60 * _radius, offset,
+        angle30 * _radius, -angle60 * _radius, 0.0,
+        _radius, 0.0, offset,
 
-        angle30 * radius, -angle60 * radius, 0.0,
-        angle30 * radius, -angle60 * radius, offset,
-        -angle30 * radius, -angle60 * radius, 0.0,
+        angle30 * _radius, -angle60 * _radius, 0.0,
+        angle30 * _radius, -angle60 * _radius, offset,
+        -angle30 * _radius, -angle60 * _radius, 0.0,
 
-        -angle30 * radius, -angle60 * radius, offset,
-        -angle30 * radius, -angle60 * radius, 0.0,
-        angle30 * radius, -angle60 * radius, offset,
+        -angle30 * _radius, -angle60 * _radius, offset,
+        -angle30 * _radius, -angle60 * _radius, 0.0,
+        angle30 * _radius, -angle60 * _radius, offset,
 
-        -angle30 * radius, -angle60 * radius, offset,
-        -radius, 0.0, 0.0,
-        -angle30 * radius, -angle60 * radius, 0.0,
+        -angle30 * _radius, -angle60 * _radius, offset,
+        -_radius, 0.0, 0.0,
+        -angle30 * _radius, -angle60 * _radius, 0.0,
 
-        -radius, 0.0, offset,
-        -radius, 0.0, 0.0,
-        -angle30 * radius, -angle60 * radius, offset,
+        -_radius, 0.0, offset,
+        -_radius, 0.0, 0.0,
+        -angle30 * _radius, -angle60 * _radius, offset,
     ]);
 
     geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
@@ -183,4 +190,4 @@ function createRay() {
     return mesh;
 }
 
-export { createRay, createCube, createPlane, createHitmarker };
+export { createRay, createCube, createPlane, createHitmarker, createSphere };

@@ -1,6 +1,6 @@
 import { Vector3, Vector2 } from "https://unpkg.com/three@0.127.0/build/three.module.js";
 import { createCamera } from "./components/camera.js";
-import { createCube, createPlane, createHitmarker, createRay } from "./components/simpleObjects.js";
+import { createCube, createPlane, createHitmarker, createRay, createSphere } from "./components/simpleObjects.js";
 import { createScene } from "./components/scene.js";
 import { attachedRay } from "./components/attachedRay.js";
 import { createAmbientlight, createDirectionallight } from "./components/lights.js";
@@ -12,6 +12,7 @@ import { loadGLTF } from "./components/gltf.js";
 import { ARButton } from 'https://unpkg.com/three@0.126.0/examples/jsm/webxr/ARButton.js';
 import { createGroup } from "./components/group.js";
 import { createVerticalLaserMat, createHorizontalLaserMat, createRadialLaserMat } from "./components/customMaterial.js";
+import { ParticleSystem } from "./components/ParticleSystem.js";
 
 let camera;
 let renderer;
@@ -45,40 +46,52 @@ class RTCG {
         const oneCube = createCube(1, 1, 10, 0xafaf00);
         scene.add(oneCube);
         oneCube.position.set(5, 0, 0);
+
+        const sphere = createSphere(0.5, 8, 0xf46f4f);
+        scene.add(sphere);
+        sphere.position.set(0, 0, -4);
         //#endregion
 
-        const speed = 20;
+        const speed = 1;
         const cube = createCube(0, 0, 0, 0xff0000);
         scene.add(cube);
         cube.position.set(0, 0, 0);
 
-        const circleBlue = createHitmarker(0.05, 0.1, 0xff006f, 2, 2, 0.01);
+        const hitMarker = createHitmarker(0.01, 0.025, 0xff006f, 2, 2, 0.01);
         const rLaserMat = createRadialLaserMat(new Vector3(1, 0.1, 0.1), speed);            //creating material with "moving shader" on the X-Axis
-        circleBlue.material = rLaserMat;
-        const group = createGroup([circleBlue]);
+        hitMarker.material = rLaserMat;
+
+        const particles = new ParticleSystem(1000);
+        hitMarker.add(particles.points);
+        console.log(particles);
+        const group = createGroup([hitMarker]);
 
         //creating the incoming laser-beam
         const downray = createRay();
         cube.add(downray);
-        downray.rotation.set(-Math.PI / 2, 0, 0)
+        downray.position.set(0, 0.4, 0);
+        downray.rotation.set(-Math.PI / 2, 0, 0);
         downray.scale.z = (1, 1, 100);
         const vLaserMat = createVerticalLaserMat(new Vector3(1, 0.0, 0.0), speed);          //creating material with "moving shader" on the Y-Axis
         downray.material = vLaserMat;
 
-        //loading portal cube model
+        //loading portal cube model                     
         const gltf = loadGLTF("src/rtcg-app/Assets/PortalCube.glb");
-        cube.add(gltf);
+        cube.add(gltf);                                                                     //because the children of gltf were not accessible it's attached to the cube 
         gltf.scale.set(5, 5, 5);
         gltf.position.set(-0.05 * gltf.scale.x, 0, 0.05 * gltf.scale.z);                    //because of a pivot offset in the gltf-model there's a correction needed
 
         //attaching the reflected laser-beam
-        const childRay = new attachedRay(scene, cube, group, 0.1);
+        const childRay = new attachedRay(scene, cube, group, 0.4,);
         const hLaserMat = createHorizontalLaserMat(new Vector3(1, 0.0, 0.0), -speed);
         childRay.rayVisualizer.material = hLaserMat;
+
+
 
         //setup moving Objects
         animLoop = new AnimationLoop(camera, scene, renderer);
         animLoop.addAnimatedObjects([downray, childRay, vLaserMat, hLaserMat, rLaserMat, childRay.rayVisualizer]);
+        animLoop.addAnimatedObject(particles.particles);
         animLoop.addInputControlledObject(cube);
         this.start();
     }
