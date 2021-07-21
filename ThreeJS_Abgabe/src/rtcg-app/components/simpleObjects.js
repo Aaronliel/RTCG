@@ -112,10 +112,6 @@ function createHitmarker(minRadius = 0.05, maxRadius = 0.1, color = 0xff0000, sp
     const material = new THREE.MeshPhongMaterial({ color: color });
     const mesh = new THREE.Mesh(geometry, material);
 
-    material.hide = (bool) => {
-
-    }
-
     return mesh;
 }
 

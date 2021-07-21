@@ -1,7 +1,7 @@
 import * as THREE from "https://unpkg.com/three@0.127.0/build/three.module.js";
 
 const particleVertexSource = `
-uniform float count;
+uniform float multiplier;
 
 attribute float size;
 attribute vec4 pColor;
@@ -11,15 +11,13 @@ varying vec4 vColor;
 void main(){
 
     gl_Position= projectionMatrix * modelViewMatrix *vec4(position,1.0);
-    gl_PointSize = size* count / gl_Position.w;
+    gl_PointSize = size* multiplier / gl_Position.w;
     vColor = pColor;
 }
 `
 
 const particleFragmentSource = `
     uniform sampler2D sparkTexture;
-
-    
     
     varying vec4 vColor;
 
@@ -40,8 +38,8 @@ class ParticleSystem {
             texture: {
                 value: new THREE.TextureLoader().load("src/rtcg-app/Assets/spark.png")
             },
-            count: {
-                value: _count
+            multiplier: {
+                value: 100
             }
         };
         this.material = new THREE.ShaderMaterial({
@@ -66,10 +64,9 @@ class ParticleSystem {
         this.updateGeometry();
     }
 
-
     addParticles(count = 10) {
         for (let i = 0; i < count; i++) {
-            let grayscale = Math.random();
+            let grayscale = Math.random() - 0.1;
             grayscale = clamp(grayscale, 0, 0.5);
             this.particles.push({
                 position: new THREE.Vector3(
@@ -77,11 +74,11 @@ class ParticleSystem {
                     ((Math.random() - 0.5) * 2 - 1) * 2,
                     ((Math.random() - 0.5) * 2 - 1) * 2,
                 ),
-                size: (Math.random() + 0.2) * 5,
+                size: (Math.random() + 0.2) * 0.5,
                 pColor: new THREE.Vector3(
-                    Math.random(), grayscale, grayscale),
+                    Math.random() + 0.4, grayscale, grayscale),
                 alpha: 1.0,
-                life: 0.01
+                life: 0.001
             });
 
         }
@@ -89,17 +86,18 @@ class ParticleSystem {
             for (const particle of this.particles) {
                 particle.life -= delta;
                 let dst = particle.position.distanceTo(new THREE.Vector3(0, 0, 0));
-                particle.position.multiplyScalar(1.25 + delta);
+                particle.position.multiplyScalar(1.2 + delta);
 
-                if (dst >= 1 || particle.life <= 0) {
+                //reseting particles postion and lifetime => avoiding spawnwave effect
+                if (dst >= 0.25 || particle.life <= 0) {
                     particle.position.random().sub(new THREE.Vector3(0.5, 0.5, 0)).multiplyScalar(0.5);
                     particle.position.clampLength(0.0, 0.2);
-                    particle.life = Math.random() * 2;
-                    console.log("tick");
+                    particle.life = Math.random() * 0.1;
                 }
             }
 
             this.updateGeometry();
+            this.updateParticles();
         }
     }
 

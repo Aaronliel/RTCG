@@ -10,9 +10,9 @@ import { AnimationLoop } from "./systems/animationLoop.js";
 import { createOrbCTRL } from "./systems/OrbitCTRL.js";
 import { loadGLTF } from "./components/gltf.js";
 import { ARButton } from 'https://unpkg.com/three@0.126.0/examples/jsm/webxr/ARButton.js';
-import { createGroup } from "./components/group.js";
 import { createVerticalLaserMat, createHorizontalLaserMat, createRadialLaserMat } from "./components/customMaterial.js";
 import { ParticleSystem } from "./components/ParticleSystem.js";
+import dat from '//unpkg.com/dat.gui/build/dat.gui.module.js';
 
 let camera;
 let renderer;
@@ -52,22 +52,25 @@ class RTCG {
         sphere.position.set(0, 0, -4);
         //#endregion
 
-        const speed = 1;
+
+        let laserSpeed = 1;                                                                  //higher laserSpeed => more pulses/second
         const cube = createCube(0, 0, 0, 0xff0000);
         scene.add(cube);
         cube.position.set(0, 0, 0);
 
         const hitMarker = createHitmarker(0.01, 0.025, 0xff006f, 2, 2, 0.01);
-        const rLaserMat = createRadialLaserMat(new Vector3(1, 0.1, 0.1), speed);            //creating material with "moving shader" on the X-Axis
+        const rLaserMat = createRadialLaserMat(new Vector3(1, 0.1, 0.1), laserSpeed);            //creating material with "moving shader" on the X-Axis
         hitMarker.material = rLaserMat;
 
-        const particles = new ParticleSystem(1000);
+        //adding particlesystem to enhance hitMarker
+        const particles = new ParticleSystem(camera, 50);
         hitMarker.add(particles.points);
+
+        //hide hitMarker + particlesystem when there is no hit
         hitMarker.visible = (_visible) => {
             hitMarker.material.visible = _visible;
             particles.material.visible = _visible;
         }
-        const group = createGroup([hitMarker]);
 
         //creating the incoming laser-beam
         const downray = createRay();
@@ -75,7 +78,7 @@ class RTCG {
         downray.position.set(0, 0.4, 0);
         downray.rotation.set(-Math.PI / 2, 0, 0);
         downray.scale.z = (1, 1, 100);
-        const vLaserMat = createVerticalLaserMat(new Vector3(1, 0.0, 0.0), speed);          //creating material with "moving shader" on the Y-Axis
+        const vLaserMat = createVerticalLaserMat(new Vector3(1, 0.0, 0.0), laserSpeed);          //creating material with "moving shader" on the Y-Axis
         downray.material = vLaserMat;
 
         //loading portal cube model                     
@@ -86,17 +89,28 @@ class RTCG {
 
         //attaching the reflected laser-beam
         const childRay = new attachedRay(scene, cube, hitMarker, 0.4,);
-        const hLaserMat = createHorizontalLaserMat(new Vector3(1, 0.0, 0.0), -speed);
+        const hLaserMat = createHorizontalLaserMat(new Vector3(1, 0.0, 0.0), -laserSpeed);
         childRay.rayVisualizer.material = hLaserMat;
-
-
 
         //setup moving Objects
         animLoop = new AnimationLoop(camera, scene, renderer);
-        animLoop.addAnimatedObjects([downray, childRay, vLaserMat, hLaserMat, rLaserMat, childRay.rayVisualizer]);
-        animLoop.addAnimatedObject(particles.particles);
+        animLoop.addAnimatedObjects([downray, childRay, vLaserMat, hLaserMat, rLaserMat, childRay.rayVisualizer, particles.particles]);
         animLoop.addInputControlledObject(cube);
         this.start();
+
+        var params = {
+            laserSpeed: laserSpeed,
+            forward: 'W'
+        };
+        var gui = new dat.GUI();
+        gui.width = 300;
+        gui.add(params, 'laserSpeed').min(1).max(15).onChange(val => {
+            console.log("ValueCahnged: ", val);
+            laserSpeed = val;
+            vLaserMat.update(laserSpeed);
+            hLaserMat.update(-laserSpeed);
+            rLaserMat.update(laserSpeed);
+        });
     }
 
     start() {

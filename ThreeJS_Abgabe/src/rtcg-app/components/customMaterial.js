@@ -86,6 +86,10 @@ function createVerticalLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 1,
         elapsedTime += delta;
         material.uniforms.time.value = elapsedTime;
     }
+    material.update = (speed = 1) => {
+        material.uniforms.speed.value = speed;
+        material.needsUpdate = true;
+    }
 
     return material;
 }
@@ -113,49 +117,6 @@ const hFragment_source = `
         if(mixValue < 0.3){
             mixValue = 0.0;
         }
-        gl_FragColor = vec4(color,mixValue);
-        
-    }
-    `;
-
-const transparentFragment_source = `
-    uniform vec3 objColor;
-    uniform float alpha;
-
-    varying float fresnelFactor;
-
-    void main() { 
-        vec3 f_color = objColor * vec3(clamp(fresnelFactor,0.0,1.0));
-
-        gl_FragColor = vec4(f_color,alpha);
-    
-    }
-`;
-
-const rVertex_source = `
-    uniform float time;
-
-    void main() {
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
-    }
-    `;
-const rFragment_source = `
-    uniform vec3 objColor;
-    uniform vec2 screensize;
-    uniform float time;
-    uniform float speed;
-    uniform float rectangleInterval;
-
-    void main() {   
-        vec2 st = gl_FragCoord.xy/screensize;         
-        vec3 darkColor = vec3(1,0.4,0.25);
-        float x = 1.0;                                  
-        x = x* time * speed;
-
-        float mixValue = sin(x *5.0*rectangleInterval)/5.0 + sin(x*3.0*rectangleInterval)/3.0 + sin(x*rectangleInterval) * 0.5 +0.5;
-
-        vec3 color = mix(objColor, darkColor,mixValue);
-
         gl_FragColor = vec4(color,mixValue);
         
     }
@@ -196,8 +157,44 @@ function createHorizontalLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 
         elapsedTime += delta;
         material.uniforms.time.value = elapsedTime;
     }
+    material.update = (speed = 1) => {
+        material.uniforms.speed.value = speed;
+        material.needsUpdate = true;
+    }
     return material;
 }
+
+
+const rVertex_source = `
+    uniform float time;
+
+    void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    }
+    `;
+const rFragment_source = `
+    uniform vec3 objColor;
+    uniform vec2 screensize;
+    uniform float time;
+    uniform float speed;
+    uniform float rectangleInterval;
+
+    void main() {   
+        vec2 st = gl_FragCoord.xy/screensize;         
+        vec3 darkColor = vec3(1,0.4,0.25);
+        float x = 1.0;                                  
+        x = x* time * speed;
+
+        float mixValue = sin(x *5.0*rectangleInterval)/5.0 + sin(x*3.0*rectangleInterval)/3.0 + sin(x*rectangleInterval) * 0.5 +0.5;
+
+        vec3 color = mix(objColor, darkColor,mixValue);
+
+        gl_FragColor = vec4(color,mixValue);
+        
+    }
+    `;
+
+
 function createRadialLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 1, _interval = 20) {
     let elapsedTime = 0;
     const material = new THREE.ShaderMaterial({
@@ -232,8 +229,27 @@ function createRadialLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 1, _
         elapsedTime += delta;
         material.uniforms.time.value = elapsedTime;
     }
+
+    material.update = (speed = 1) => {
+        material.uniforms.speed.value = speed;
+        material.needsUpdate = true;
+    }
     return material;
 }
+
+const transparentFragment_source = `
+    uniform vec3 objColor;
+    uniform float alpha;
+
+    varying float fresnelFactor;
+
+    void main() { 
+        vec3 f_color = objColor * vec3(clamp(fresnelFactor,0.0,1.0));
+
+        gl_FragColor = vec4(f_color,alpha);
+    
+    }
+`;
 
 function createTransparentMat(_color = new THREE.Vector3(0, 1, 1), _alpha = 1) {
     const material = new THREE.ShaderMaterial({
