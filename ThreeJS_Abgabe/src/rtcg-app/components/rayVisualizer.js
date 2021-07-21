@@ -6,59 +6,60 @@ function createRay() {
     const geometry = new BufferGeometry();
     // create a simple square shape. We duplicate the top left and bottom right
     // vertices because each vertex needs to appear once per triangle.
+
+    const angle60 = Math.PI / 3;
+    const angle30 = Math.PI / 6;
+    const offset = 1.0;
+    const radius = 0.05;
     const vertices = new Float32Array([
-        -0.05, -0.05, 0.0,
-        -0.05, 0.05, 0.0, //1
-        0.05, -0.05, 0.0,
+        radius, 0.0, offset,
+        radius, 0.0, 0.0,
+        angle30 * radius, angle60 * radius, 0.0,
 
-        -0.05, 0.05, 0.0,
-        0.05, 0.05, 0.0,  //2
-        0.05, -0.05, 0.0,
+        radius, 0.0, offset,
+        angle30 * radius, angle60 * radius, 0.0,
+        angle30 * radius, angle60 * radius, offset,
 
-        0.05, -0.05, 0.0,
-        0.05, 0.05, 0.0,  //3
-        0.05, -0.05, 1.0,
 
-        0.05, -0.05, 1.0,
-        0.05, 0.05, 0.0,  //4
-        0.05, 0.05, 1.0,
+        angle30 * radius, angle60 * radius, offset,
+        angle30 * radius, angle60 * radius, 0.0,
+        -angle30 * radius, angle60 * radius, 0.0,
 
-        0.05, 0.05, 1.0,
-        0.05, 0.05, 0.0,  //5
-        -0.05, 0.05, 1.0,
+        angle30 * radius, angle60 * radius, offset,
+        -angle30 * radius, angle60 * radius, 0.0,
+        -angle30 * radius, angle60 * radius, offset,
 
-        -0.05, 0.05, 0.0,
-        -0.05, 0.05, 1.0, //6
-        0.05, 0.05, 0.0,
+        -angle30 * radius, angle60 * radius, offset,
+        -angle30 * radius, angle60 * radius, 0.0,
+        -radius, 0.0, 0.0,
 
-        -0.05, 0.05, 0.0,
-        -0.05, -0.05, 0.0, //7
-        -0.05, -0.05, 1.0,
+        -radius, 0.0, offset,
+        -angle30 * radius, angle60 * radius, offset,
+        -radius, 0.0, 0.0,
 
-        -0.05, 0.05, 0.0,
-        -0.05, -0.05, 1.0, //8
-        -0.05, 0.05, 1.0,
+        radius, 0.0, offset,
+        angle30 * radius, -angle60 * radius, 0.0,
+        radius, 0.0, 0.0,
 
-        0.05, -0.05, 0.0,
-        -0.05, -0.05, 1.0,  //9
-        -0.05, -0.05, 0.0,
+        angle30 * radius, -angle60 * radius, offset,
+        angle30 * radius, -angle60 * radius, 0.0,
+        radius, 0.0, offset,
 
-        0.05, -0.05, 0.0,
-        -0.05, -0.05, 1.0,  //9
-        -0.05, -0.05, 0.0,
+        angle30 * radius, -angle60 * radius, 0.0,
+        angle30 * radius, -angle60 * radius, offset,
+        -angle30 * radius, -angle60 * radius, 0.0,
 
-        0.05, -0.05, 0.0,
-        0.05, -0.05, 1.0,
-        -0.05, -0.05, 1.0,
+        -angle30 * radius, -angle60 * radius, offset,
+        -angle30 * radius, -angle60 * radius, 0.0,
+        angle30 * radius, -angle60 * radius, offset,
 
-        -0.05, 0.05, 1.0,
-        -0.05, -0.05, 1.0,    //11
-        0.05, -0.05, 1.0,
+        -angle30 * radius, -angle60 * radius, offset,
+        -radius, 0.0, 0.0,
+        -angle30 * radius, -angle60 * radius, 0.0,
 
-        0.05, 0.05, 1.0,
-        -0.05, 0.05, 1.0, //12
-        0.05, -0.05, 1.0
-
+        -radius, 0.0, offset,
+        -radius, 0.0, 0.0,
+        -angle30 * radius, -angle60 * radius, offset,
     ]);
 
     geometry.setAttribute('position', new BufferAttribute(vertices, 3));

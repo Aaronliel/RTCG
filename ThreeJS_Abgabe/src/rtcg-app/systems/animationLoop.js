@@ -46,11 +46,9 @@ class AnimationLoop {
                 case "KeyE":
                     inputOutofClass.z = 1;
                     break;
-
                 default:
                     break;
             }
-
         });
 
         document.addEventListener("keyup", function (event) {
@@ -86,6 +84,11 @@ class AnimationLoop {
 
     addAnimatedObject(_object) {
         this.animObjects.push(_object);
+    }
+    addAnimatedObjects(_objects) {
+        for (const obj of _objects) {
+            this.animObjects.push(obj);
+        }
     }
 
     addInputControlledObject(_object) {

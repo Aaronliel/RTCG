@@ -12,6 +12,10 @@ function createOrbCTRL(camera, canvas) {
     controls.dampingFactor = 0.25;
     controls.enableZoom = true;
     controls.autoRotation = true;
+    controls.enablePan = false;
+    controls.maxZoom = 0;
+    controls.minZoom = 2;
+    controls.minPolarAngle = 0;
 
     return controls;
 }

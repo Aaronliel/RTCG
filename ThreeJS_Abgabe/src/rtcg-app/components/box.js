@@ -12,10 +12,14 @@ function createCube(x = 2, y = 2, z = 2, color = 0x0f0f0f) {
     cube.tick = (delta) => {
         cube.rotation.y += 0.5 * delta * speed;
     }
-    cube.update = (delta, input) => {
-        cube.position.x += input.x * delta;
-        cube.position.z += input.y * delta;
+    cube.update = (delta, input) => {                               //moving the ocject by WASD/QE => input.x (W/-S) as forward, input.y (A/D) sideways, input.z as Y-Rotation
         cube.rotation.y -= input.z * delta;
+        var forward = new Vector3(0, 0, 1 * input.x * delta);
+        var right = new Vector3(-1 * input.y * delta, 0, 0);
+
+        forward.applyEuler(cube.rotation);
+        right.applyEuler(cube.rotation);
+        cube.position.add(forward.add(right));
     }
 
     return cube;

@@ -1,25 +1,29 @@
 import { GLTFLoader } from 'https://unpkg.com/three@0.127.0/examples/jsm/loaders/GLTFLoader.js';
-import { Mesh, TextureLoader, MeshPhongMaterial } from "https://unpkg.com/three@0.127.0/build/three.module.js";
+import { Mesh, TextureLoader, MeshPhongMaterial, Vector3 } from "https://unpkg.com/three@0.127.0/build/three.module.js";
 import { createScene } from './scene.js';
+import { createTransparentMat } from './customMaterial.js';
 
 
 function loadGLTF(_modelURL) {
     let loader = new GLTFLoader();
     let scene = createScene();
     let root;
-    let obj3D;
+    let cube;
+    let metalRings;
+    let lens;
     let Tloader = new TextureLoader();
-    obj3D = loader.load(_modelURL, function (_gltf) {
+    cube = loader.load(_modelURL, function (_gltf) {
         root = _gltf.scene;
-        // scene.add(root);
-        console.log(_gltf);
-        obj3D = _gltf.scene.getObjectByName("Cube");
-        obj3D.material = new MeshPhongMaterial();
-        obj3D.material.alphaMap = Tloader.load("src/rtcg-app/Assets/textures/DefaultMaterial_Opacity.bmp");
-        obj3D.material.map = Tloader.load("src/rtcg-app/Assets/textures/DefaultMaterial.001_baseColor.jpeg");
-        scene.add(obj3D);
+        cube = _gltf.scene.getObjectByName("Cube");
+        cube.material = new MeshPhongMaterial({ color: 0x6f6f6f });
+        cube.castShadow = true;
+        cube.receiveShadow = true;
+        metalRings = _gltf.scene.getObjectByName("Metalrings");
+        metalRings.material = new MeshPhongMaterial({ color: 0x000000 });
+        lens = _gltf.scene.getObjectByName("Lens");
+        lens.material = createTransparentMat(new Vector3(0, 0.5, 0), 0.950);
+        scene.add(cube);
     });
-    console.log(obj3D);
 
 
     scene.update = (delta, input) => {
