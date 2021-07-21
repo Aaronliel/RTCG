@@ -54,10 +54,13 @@ class RTCG {
 
 
         let laserSpeed = 1;                                                                  //higher laserSpeed => more pulses/second
+
+        //a cube used as parent for portal-cube
         const cube = createCube(0, 0, 0, 0xff0000);
         scene.add(cube);
         cube.position.set(0, 0, 0);
 
+        //a visual feedback of the raycasthit
         const hitMarker = createHitmarker(0.01, 0.025, 0xff006f, 2, 2, 0.01);
         const rLaserMat = createRadialLaserMat(new Vector3(1, 0.1, 0.1), laserSpeed);            //creating material with "moving shader" on the X-Axis
         hitMarker.material = rLaserMat;
@@ -98,9 +101,10 @@ class RTCG {
         animLoop.addInputControlledObject(cube);
         this.start();
 
+
+        //Control-UI for adjusting laserspeed
         var params = {
             laserSpeed: laserSpeed,
-            forward: 'W'
         };
         var gui = new dat.GUI();
         gui.width = 300;

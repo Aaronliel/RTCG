@@ -46,37 +46,39 @@ class attachedRay {
 
     }
 
-    setRaycaster(_origin, _direction) {
-        this.origin = _origin;
-        this.target.position.x = _direction.x;
-        this.target.position.y = _direction.y;
-        this.target.position.z = _direction.z;
-
-        this.rayVisualizer.position = _origin;
-    }
-
 
     castRay() {
+        //preparing vectors for calculations
         let parentPos = new THREE.Vector3();
         this.parent.getWorldPosition(parentPos);
         let targetPos = new THREE.Vector3();
         this.target.getWorldPosition(targetPos);
+
+        //calculating ray/raycast direction
         this.direction = targetPos.sub(parentPos.add(this.origin));
-        this.direction.normalize()
+        this.direction.normalize();
+
         this.raycaster.set(this.parent.position, this.direction);
+
+        //aligning visual ray to actual raycast-ray
         this.rayVisualizer.position.x = this.distance;
         this.rayVisualizer.rotation.y = Math.PI / 2;
+
+
         const intersects = this.raycaster.intersectObjects(this.scene.children);
         if (intersects.length > 0) {
+
+            //scaling visual up to hit point
             this.rayVisualizer.scale.z = intersects[0].distance - this.distance;
 
+            //placing hitmarker according to hit-surface
             this.splash.position.x = intersects[0].distance;
-
             this.splash.lookAt(intersects[0].point.add(intersects[0].face.normal));
-
             this.splash.visible(true);
         }
         else {
+
+            //reset visual indicators
             this.rayVisualizer.scale.z = 0;
             this.splash.visible(false);
         }

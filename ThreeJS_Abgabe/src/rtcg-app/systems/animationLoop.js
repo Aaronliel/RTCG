@@ -102,9 +102,13 @@ class AnimationLoop {
         const fps = 1 / delta;
         fps_element.textContent = fps.toFixed(1);
 
+
+        //calling prepared animations/tick methods
         for (const obj of this.animObjects) {
             obj.tick(delta);
         }
+
+        //calling input-depending movements
         for (const obj of this.inputControlledObjects) {
             obj.update(delta, inputOutofClass);
         }

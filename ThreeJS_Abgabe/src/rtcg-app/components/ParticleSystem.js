@@ -102,7 +102,7 @@ class ParticleSystem {
     }
 
 
-
+    //ensuring correct z-order
     updateParticles() {
         this.particles.sort((a, b) => {
             const d1 = this.camera.position.distanceTo(a.position);

@@ -30,6 +30,7 @@ const vFragment_source = `
         void main() { 
             vec2 st = gl_FragCoord.xy/screensize;
             vec3 darkColor = vec3(1,0.4,0.25);
+            
             //"shader movement" on object
             st.y = st.y + time * speed;                     
 
@@ -51,6 +52,8 @@ const vFragment_source = `
             
         }
     `;
+
+//"moving shader"-material is created in this method
 function createVerticalLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 1, _interval = 20) {
     let elapsedTime = 0;
 
@@ -82,10 +85,14 @@ function createVerticalLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 1,
         fragmentShader: vFragment_source,
         transparent: true,
     });
+
+
     material.tick = (delta) => {
         elapsedTime += delta;
         material.uniforms.time.value = elapsedTime;
     }
+
+    //responding function to laserspeed control (UI)
     material.update = (speed = 1) => {
         material.uniforms.speed.value = speed;
         material.needsUpdate = true;
@@ -93,6 +100,8 @@ function createVerticalLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 1,
 
     return material;
 }
+
+
 const hFragment_source = `
     uniform vec3 objColor;
     uniform vec2 screensize;
@@ -194,7 +203,7 @@ const rFragment_source = `
     }
     `;
 
-
+//Material used for the hitmarker
 function createRadialLaserMat(_color = new THREE.Vector3(0, 1, 1), _speed = 1, _interval = 20) {
     let elapsedTime = 0;
     const material = new THREE.ShaderMaterial({
@@ -250,7 +259,7 @@ const transparentFragment_source = `
     
     }
 `;
-
+//Material for the lens inside the portal-cube
 function createTransparentMat(_color = new THREE.Vector3(0, 1, 1), _alpha = 1) {
     const material = new THREE.ShaderMaterial({
         uniforms: {
